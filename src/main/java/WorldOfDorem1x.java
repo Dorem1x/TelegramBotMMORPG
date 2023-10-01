@@ -116,16 +116,17 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             }
             response.setText(newPlayerList.toString());
         } else if (command.equals("/getShopItems")) {
-            response.setText(shop.getItems().toString());
+            response.setText(shop.getItemsInfo());
         } else if(command.equals("/buyItem1")){
             if((playerList.get(playerName).getCoins() >= 10) && (isLose == false)
             && playerList.get(playerName).getLevel() >= 3) {
-                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins() - 10);
+                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins()
+                        - shop.getItems().get("Малое зелье лечения"));
                 playerList.get(playerName).setHealth(playerList.get(playerName).getHealth() + 25);
                 if(playerList.get(playerName).getHealth() > 100) {
                     playerList.get(playerName).setHealth(100);
                 }
-                response.setText("Малое зелье успешно куплено.\n" +
+                response.setText("Малое зелье лечения успешно куплено.\n" +
                         "Текущее здоровье: " + playerList.get(playerName).getHealth() +
                         "\n Количество монет: " + playerList.get(playerName).getCoins());
             } else{
@@ -134,12 +135,13 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
         } else if(command.equals("/buyItem2")){
             if((playerList.get(playerName).getCoins() >= 15) && (isLose == false)
             && (playerList.get(playerName).getLevel() >= 5)) {
-                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins() - 15);
+                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins() -
+                        shop.getItems().get("Большое зелье лечения"));
                 playerList.get(playerName).setHealth(playerList.get(playerName).getHealth() + 50);
                 if(playerList.get(playerName).getHealth() > 100) {
                     playerList.get(playerName).setHealth(100);
                 }
-                response.setText("Большое зелье успешно куплено.\n" +
+                response.setText("Большое зелье лечения успешно куплено.\n" +
                         "Текущее здоровье: " + playerList.get(playerName).getHealth() +
                         "\n Количество монет: " + playerList.get(playerName).getCoins());
             } else{
@@ -148,12 +150,13 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
         } else if(command.equals("/buyItem3")){
             if((playerList.get(playerName).getCoins() >= 25) && (isLose == false)
                     && (playerList.get(playerName).getLevel() >= 8)) {
-                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins() - 25);
+                playerList.get(playerName).setCoins(playerList.get(playerName).getCoins() -
+                        shop.getItems().get("Огромное зелье лечения"));
                 playerList.get(playerName).setHealth(playerList.get(playerName).getHealth() + 100);
                 if(playerList.get(playerName).getHealth() > 100) {
                     playerList.get(playerName).setHealth(100);
                 }
-                response.setText("Большое зелье успешно куплено.\n" +
+                response.setText("Огромное зелье лечения успешно куплено.\n" +
                         "Текущее здоровье: " + playerList.get(playerName).getHealth() +
                         "\n Количество монет: " + playerList.get(playerName).getCoins());
             } else{
