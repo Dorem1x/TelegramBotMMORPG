@@ -1,6 +1,10 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDateTime;
@@ -18,7 +22,32 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
 
     public WorldOfDorem1x(String botToken) {
         super(botToken);
+        List<BotCommand> botCommandList = new ArrayList<>();
+        botCommandList.add(new BotCommand("/info", "Вызвать меню помощи"));
+        botCommandList.add(new BotCommand("/lets_go_for_an_adventure", "Начать новое приключение!"));
+        botCommandList.add(new BotCommand("/create_player", "Создание нового игрока"));
+        botCommandList.add(new BotCommand("/get_player_info",
+                "Вся доступная информация о твоём персонаже"));
+        botCommandList.add(new BotCommand("/delete_player", "Удалить своего персонажа"));
+        botCommandList.add(new BotCommand("/get_players_list",
+                "Посмотреть список всех персонажей на сервере в текущий момент"));
+        botCommandList.add(new BotCommand("/get_records_table", "Посмотреть таблицу рекордов"));
+        botCommandList.add(new BotCommand("/get_shop_items", "Посмотреть содержимое лавки торговца"));
+        botCommandList.add(new BotCommand("/buy_item1", "Купить 1-ый предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item2", "Купить 2-ой предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item3", "Купить 3-ий предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item4", "Купить 4-ый предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item5", "Купить 5-ый предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item6", "Купить 6-ой предмет у торговца"));
+        botCommandList.add(new BotCommand("/buy_item7", "Купить 7-ой предмет у торговца"));
+        try {
+            this.execute(new SetMyCommands(botCommandList, new BotCommandScopeDefault(), null));
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
     }
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -26,7 +55,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
         String playerName = update.getMessage().getChat().getUserName();
         SendMessage response = new SendMessage();
         response.setChatId(update.getMessage().getChatId().toString());
-        if (command.equals("/getPlayerInfo")) {
+        if (command.equals("/get_player_info")) {
             if (playerList.get(playerName).isLose() == false) {
                 response.setText(Player.getPlayerInfo(playerList.get(playerName)));
             } else {
@@ -35,7 +64,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
                         "\nТакже можете оставить свой отзыв/комментарий тут: " +
                         "\n@Dorem1x");
             }
-        } else if (command.equals("/letsGoForAnAdventure")) {
+        } else if (command.equals("/lets_go_for_an_adventure")) {
 
             if ((playerList.get(playerName).isLose() == false) && (playerList.get(playerName).isWin() == false)) {
                 int playingDice = (int) (Math.random() * 30 + 1);
@@ -164,17 +193,17 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             }
         } else if (command.equals("/info")) {
             response.setText(info.getInfo());
-        } else if (command.equals("/createPlayer")) {
-                Player newPlayer = new Player(playerName);
-                newPlayer.setHealth(100);
-                newPlayer.setMaxHealth(100);
-                newPlayer.setLevel(1);
-                newPlayer.setCoins(0);
-                playerList.put(playerName, newPlayer);
-                playerList.get(playerName).setLose(false);
-                response.setText("Создан новый игрок с именем: " + playerList.get(playerName).getName() +
-                        "\nВперед к приключениям!");
-        } else if (command.equals("/getPlayerList")) {
+        } else if (command.equals("/create_player")) {
+            Player newPlayer = new Player(playerName);
+            newPlayer.setHealth(100);
+            newPlayer.setMaxHealth(100);
+            newPlayer.setLevel(1);
+            newPlayer.setCoins(0);
+            playerList.put(playerName, newPlayer);
+            playerList.get(playerName).setLose(false);
+            response.setText("Создан новый игрок с именем: " + playerList.get(playerName).getName() +
+                    "\nВперед к приключениям!");
+        } else if (command.equals("/get_players_list")) {
             HashMap<String, Integer> newPlayerList = new HashMap<>();
             for (String key : playerList.keySet()) {
                 newPlayerList.put(key, playerList.get(key).getLevel());
@@ -183,9 +212,9 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
                 response.setText("Пока на сервере нет ни одного персонажа(");
             }
             response.setText(newPlayerList.toString());
-        } else if (command.equals("/getShopItems")) {
+        } else if (command.equals("/get_shop_items")) {
             response.setText(shop.getItemsInfo());
-        } else if (command.equals("/buyItem1")) {
+        } else if (command.equals("/buy_item1")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Малое зелье лечения")) &&
                     (playerList.get(playerName).isLose() == false)
                     && playerList.get(playerName).getLevel() >= 1) {
@@ -202,7 +231,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem2")) {
+        } else if (command.equals("/buy_item2")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Большое зелье лечения")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 10)) {
@@ -219,7 +248,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem3")) {
+        } else if (command.equals("/buy_item3")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Огромное зелье лечения")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 15)) {
@@ -236,7 +265,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem4")) {
+        } else if (command.equals("/buy_item4")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Кольчужный нагрудник")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 10) &&
@@ -249,7 +278,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem5")) {
+        } else if (command.equals("/buy_item5")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Кольчужный шлем")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 15) &&
@@ -262,7 +291,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem6")) {
+        } else if (command.equals("/buy_item6")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Кольчужные поножи")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 10) &&
@@ -275,7 +304,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/buyItem7")) {
+        } else if (command.equals("/buy_item7")) {
             if ((playerList.get(playerName).getCoins() >= shop.getItems().get("Кольчужные наплечники")) &&
                     (playerList.get(playerName).isLose() == false)
                     && (playerList.get(playerName).getLevel() >= 15) &&
@@ -288,14 +317,14 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             } else {
                 response.setText("Не хватает средств или недостаточно высокий уровень(");
             }
-        } else if (command.equals("/deletePlayer")) {
+        } else if (command.equals("/delete_player")) {
             LocalDateTime localDateTime = LocalDateTime.now();
             recordMap.put(dtf.format(localDateTime), playerList.get(playerName));
             playerList.remove(playerName);
             response.setText("К сожалению, игрока " + playerName + " больше нет с нами(((");
         } else if (command.equals("/manual")) {
             response.setText(getManual());
-        } else if (command.equals("/getRecordsTable")) {
+        } else if (command.equals("/get_records_table")) {
             response.setText(recordMap.toString());
         } else {
             response.setText("Такой команды не найдено:(");
