@@ -188,7 +188,7 @@ public class WorldOfDorem1x extends TelegramLongPollingBot {
             if (playerList.get(playerName).getHealth() <= 0) {
                 playerList.get(playerName).setLose(true);
             }
-            if (playerList.get(playerName).getLevel() == 30) {
+            if (playerList.get(playerName).getLevel() >= 30) {
                 playerList.get(playerName).setWin(true);
             }
         } else if (command.equals("/info")) {
